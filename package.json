@@ -1,0 +1,16 @@
+{
+  "name": "ttinylisp",
+  "description": "An REPL for a tiny lisp Interperter.",
+  "author": "Alex Quiterio <afp.quiterio@gmail.com>",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "node --harmony node_modules/jasmine-node/bin/jasmine-node specs/*_spec.js",
+    "gulp": "node --harmony `which gulp`"
+  },
+  "devDependencies": {
+    "jasmine-node": "1.14.5",
+    "gulp": "3.9.0",
+    "harmony" : "0.0.1",
+    "gulp-jasmine": "2.2.1"
+  }
+}
