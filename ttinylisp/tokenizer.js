@@ -43,7 +43,8 @@ class Tokenizer {
     let token = stream.currentToken();
     let lexer = dependencies.shift();
     if (dependencies.length > 0) {
-      if (lexer.match(token)) {
+      if (lexer.match(token)) {
+
         stream.advance();
         return this.resolveDependencies(stream, dependencies);
       }
