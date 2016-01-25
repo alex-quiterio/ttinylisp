@@ -37,7 +37,7 @@ class CloseContextToken extends Token {
 class NumberToken extends Token {
   constructor(lexeme) {
     super(lexeme);
-    this.lexeme = parseInt(this.lexeme);
+    this.lexeme = parseInt(this.lexeme, 10);
   }
   static definition() { return /\d/; }
   identifier() { return 'number'; }
