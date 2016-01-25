@@ -1,7 +1,6 @@
 'use strict';
 
-var TinyLispTokenizer = require('./ttinylisp/tokenizer');
-var TinyLispParser    = require('./ttinylisp/parser');
+let TinyLispParser    = require('./ttinylisp/parser');
 
 class TinyLisp {
   constructor() {
