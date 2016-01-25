@@ -19,24 +19,27 @@ class Tokenizer {
 
   // Convert a string program into a list of tokens.
   tokenize(program) {
-    let stream  = new TokensStream(program),tokens = [];
-    while(stream.currentToken() !== undefined) {
-      tokens.push(Utils.firstMatch(this.lexical, (_, lexer) => {
-        if (Utils.is_a('Array', lexer)) {
-          lexer = this.resolveDependencies(stream, lexer.slice(0));
-          if(lexer !== null) {
-            let token = this.reduceToken(stream, lexer);
-            stream.advance();
-            return new lexer(token);
-          }
-        } else if (lexer.match(stream.currentToken())) {
-          let token = this.reduceToken(stream, lexer);
-          return new lexer(token);
-        }
-      }));
+    let stream  = new TokensStream(program), tokens = [];
+    while(!Utils.blank(stream.currentToken())) {
+      tokens.push(this.detectToken(stream));
       stream.advance();
     }
     return Utils.reject(tokens, Utils.blank)
+  }
+
+  detectToken(stream) {
+    return Utils.firstMatch(this.lexical, (_, lexer) => {
+      if (Utils.is_a('Array', lexer)) {
+        lexer = this.resolveDependencies(stream, lexer.slice(0));
+        if(!Utils.blank(lexer)) {
+          let token = this.reduceToken(stream, lexer);
+          stream.advance();
+          return new lexer(token);
+        }
+      } else if (lexer.match(stream.currentToken())) {
+        return new lexer(this.reduceToken(stream, lexer));
+      }
+    });
   }
 
   resolveDependencies(stream, dependencies) {
