@@ -61,7 +61,7 @@ class Tokenizer {
   reduceToken(stream, evaluator) {
     let generic = stream.currentToken();
     if (evaluator.isAtom()) { return generic; }
-    while (stream.nextToken() !== null && evaluator.match(stream.nextToken())) {
+    while (!Utils.blank(stream.nextToken()) && evaluator.match(stream.nextToken())) {
       stream.advance();
       generic += stream.currentToken();
     }

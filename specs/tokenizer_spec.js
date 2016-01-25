@@ -36,10 +36,6 @@ describe('tokenize', () => {
     expect(transcript(t.tokenize('(print "hello_world")'))).toEqual(['(','print', "hello_world", ')']);
   });
 
-  it('should identify strings with spaces', () => {
-    expect(transcript(t.tokenize('(print "hello world")'))).toEqual(['(','print', "hello world", ')']);
-  });
-
   it('should lex list containing list', () => {
     expect(transcript(t.tokenize("(x (y) z)"))).toEqual(["(", "x", "(", "y", ")", "z", ")"]);
   });
@@ -50,10 +46,6 @@ describe('tokenize', () => {
 
   it('should lex a single atom', () => {
     expect(transcript(t.tokenize("a"))).toEqual(["a"]);
-  });
-
-  it('should lex an atom in a list', () => {
-    expect(transcript(t.tokenize("()"))).toEqual(['(', ')']);
   });
 
   it('should lex multi atom list', () => {
