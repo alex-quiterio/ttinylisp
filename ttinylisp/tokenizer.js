@@ -23,7 +23,8 @@ class Tokenizer {
     while(stream.currentToken() !== null) {
       tokens.push(Utils.firstMatch(this.lexical, (_, lexer) => {
         if (Utils.is_a('Array', lexer)) {
-          if(lexer = this.resolveDependencies(stream, lexer.slice(0))) {
+          lexer = this.resolveDependencies(stream, lexer.slice(0));
+          if(lexer !== null) {
             let token = this.reduceToken(stream, lexer);
             stream.advance();
             return new lexer(token);
