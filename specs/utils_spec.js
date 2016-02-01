@@ -6,6 +6,10 @@ describe('TinyLispUtils', () => {
   it('should identify different objects', () => {
     expect(Utils.is_a('String', 'a string')).toEqual(true);
   });
+  it("should be blank", () => {
+    expect(Utils.blank(null)).toEqual(true);
+    expect(Utils.blank(undefined)).toEqual(true);
+  });
   describe('With Arrays', () => {
     it('should return the result of the first match', () => {
       let array   = [1,2,3,4,5];

@@ -13,11 +13,10 @@ class Parser {
   }
 
   parse(program) {
-    let ast = this.parseFromTokens(
+    return this.parseFromTokens(
       this.tokenizer.tokenize(program)
         .map((token, _) => token.representation())
     )
-    return ast;
   }
 
   parseFromTokens(tokens) {

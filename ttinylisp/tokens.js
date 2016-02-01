@@ -59,7 +59,7 @@ class IdentifierToken extends Token {
 }
 
 class OperatorToken extends Token {
-  static definition() { return /\+|\*|\/|\%/; }
+  static definition() { return /\+|\*|\/|\%|\<|\>|\=/; }
   identifier() { return 'operator'; }
 }
 

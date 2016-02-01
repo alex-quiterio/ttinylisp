@@ -10,23 +10,31 @@ class Utils {
     return (object === undefined ||
       object === null ||
       object === false ||
-      object === ''
+      Utils.blankString(object)
     );
+  }
+
+  static blankString(object) {
+    if (Utils.is_a('String', object)) {
+      return object === '';
+    } else {
+      return false;
+    }
   }
 
   static firstMatch(object, callback) {
     let result;
-    if (this.is_a('Object', object)) {
+    if (Utils.is_a('Object', object)) {
       for (var key in object) {
         if (object.hasOwnProperty(key)) {
            result = callback(key, object[key]);
-           if (!this.blank(result)) { break; }
+           if (!Utils.blank(result)) { break; }
         }
       }
-    } else if (this.is_a('Array', object)) {
+    } else if (Utils.is_a('Array', object)) {
       for(var i = 0; i < object.length; i++) {
         result = callback(i, object[i]);
-        if (!this.blank(result)) { break; }
+        if (!Utils.blank(result)) { break; }
       }
     }
     return result;

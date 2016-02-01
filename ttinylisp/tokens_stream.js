@@ -15,7 +15,7 @@ class TokensStream {
 
   rewind(backup) {
     backup = backup || this.streamLength;
-    this.cursorPosition = backup;
+    this.cursorPosition -= backup;
   }
 
   currentToken() {
