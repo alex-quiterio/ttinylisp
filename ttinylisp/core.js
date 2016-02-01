@@ -1,5 +1,7 @@
 'use strict';
 
+let Scope = require('./scope');
+
 class Core {
 
   static defaultEnv() {
@@ -16,16 +18,19 @@ class Core {
         '**':  Core.pow,
         'len' : Core.list_length,
         'car' : Core.car,
+        'cons': Core.cons,
         'cdr' : Core.cdr,
         'print' : Core.print,
         'let' : Core.define_variable,
         'if'  : Core.if_function,
-        'define' : Core.define_variable
+        'define' : Core.define_variable,
+        'lambda' : Core.lambda_function,
+        'defun'  : Core.function_function
     }
   }
 
   static specialTokens() {
-    return ['if', 'let', 'define'];
+    return ['if', 'let', 'define', 'lambda', 'defun'];
   }
 
   static print (x) { console.log(x); }
@@ -44,6 +49,9 @@ class Core {
   static le  (x, y) { return (x <= y); }
   static eq  (x, y) { return (x === y); }
 
+  static cons(x, y, ev) {
+    return [x].concat(y);
+  }
 
   static define_variable(lasign, rasign, ev) {
     this.set(lasign.lexeme, ev.eval(rasign));
@@ -52,6 +60,20 @@ class Core {
   static list_length(list, ev) { return list.length; }
   static if_function(test, positive, negative, ev) {
     return ev.eval(test, this) ? ev.eval(positive, this) : ev.eval(negative, this);
+  }
+
+  static lambda_function(args, body, ev) {
+    return function() {
+      let argsPopulated = {};
+      let newEv = Array.prototype.slice.call(arguments).pop();
+      args.forEach((val, ix) => argsPopulated[val.lexeme] = arguments[ix])
+      return newEv.eval(body, new Scope(argsPopulated, this));
+    }
+  }
+
+  static function_function(name, args, body, ev) {
+    this.set(name.lexeme, Core.lambda_function(args, body, ev));
+    return name.lexeme;
   }
 }
 

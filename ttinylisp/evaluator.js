@@ -1,27 +1,8 @@
 'use strict';
 
 let Core = require('./core');
+let Scope = require('./scope');
 let Utils = require('./utils');
-
-class Scope {
-
-  constructor(defs, parent) {
-    this.parent = parent;
-    this.definitions = defs || {};
-  }
-
-  set(name, value) {
-    this.definitions[name] = value;
-  }
-
-  find(name) {
-    if (this.definitions[name] !== undefined) {
-      return this.definitions[name];
-    } else if (this.parent !== null) {
-      return this.parent.find(name);
-    }
-  }
-}
 
 class Evaluator {
   constructor() {
