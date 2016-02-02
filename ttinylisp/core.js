@@ -21,16 +21,16 @@ class Core {
         'cons': Core.cons,
         'cdr' : Core.cdr,
         'print' : Core.print,
-        'let' : Core.define_variable,
+        'let'   : Core.let_function,
+        'defparameter' : Core.define_variable,
         'if'  : Core.if_function,
-        'define' : Core.define_variable,
         'lambda' : Core.lambda_function,
         'defun'  : Core.function_function
     }
   }
 
   static specialTokens() {
-    return ['if', 'let', 'define', 'lambda', 'defun'];
+    return ['if', 'defparameter', 'let', 'lambda', 'defun'];
   }
 
   static print (x) { console.log(x); }
@@ -60,6 +60,12 @@ class Core {
   static list_length(list, ev) { return list.length; }
   static if_function(test, positive, negative, ev) {
     return ev.eval(test, this) ? ev.eval(positive, this) : ev.eval(negative, this);
+  }
+
+  static let_function(definitions, rest, ev) {
+    let scope =  new Scope({}, this);
+    definitions.forEach((l,_) => Core.define_variable.apply(scope, l.concat(ev)))
+    return ev.eval(rest, scope);
   }
 
   static lambda_function(args, body, ev) {
