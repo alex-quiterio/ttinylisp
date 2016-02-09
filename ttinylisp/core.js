@@ -34,10 +34,8 @@ class Core {
   }
 
   static print (x) { console.log(x); }
-
   static car (list) { return list[0]; }
   static cdr (list) { return list.slice(1); }
-
 	static sub (x, y) { return (x - y); }
   static add (x, y) { return (x + y); }
   static mul (x, y) { return (x * y); }
@@ -48,10 +46,7 @@ class Core {
   static ge  (x, y) { return (x >= y); }
   static le  (x, y) { return (x <= y); }
   static eq  (x, y) { return (x === y); }
-
-  static cons(x, y, ev) {
-    return [x].concat(y);
-  }
+  static cons(x, y, ev) { return [x].concat(y); }
 
   static define_variable(lasign, rasign, ev) {
     this.set(lasign.lexeme, ev.eval(rasign));
