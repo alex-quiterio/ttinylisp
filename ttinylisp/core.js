@@ -16,6 +16,7 @@ class Core {
         '<=': Core.le,
         '=':  Core.eq,
         '**':  Core.pow,
+        '%':  Core.mod,
         'len' : Core.list_length,
         'car' : Core.car,
         'cons': Core.cons,
@@ -37,6 +38,7 @@ class Core {
   static car (list) { return list[0]; }
   static cdr (list) { return list.slice(1); }
 	static sub (x, y) { return (x - y); }
+  static mod (x, y) { return (x % y); }
   static add (x, y) { return (x + y); }
   static mul (x, y) { return (x * y); }
   static div (x, y) { return (x / y); }
@@ -74,7 +76,7 @@ class Core {
 
   static function_function(name, args, body, ev) {
     this.set(name.lexeme, Core.lambda_function(args, body, ev));
-    return name.lexeme;
+    return name.lexeme.toUpperCase();
   }
 }
 
