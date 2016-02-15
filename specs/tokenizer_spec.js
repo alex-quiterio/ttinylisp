@@ -32,8 +32,12 @@ describe('tokenize', () => {
     expect(transcript(t.tokenize("(print (* 203 2))"))).toEqual(['(','print', '(', '*', 203, 2, ')', ')']);
   });
 
-  it('should identify strings', () => {
+  it('should identify a string with different characters', () => {
     expect(transcript(t.tokenize('(print "hello_world")'))).toEqual(['(','print', "hello_world", ')']);
+  });
+
+  it('should identify two strings', () => {
+    expect(transcript(t.tokenize('(print "hello world")'))).toEqual(['(','print', "hello world", ')']);
   });
 
   it('should lex list containing list', () => {

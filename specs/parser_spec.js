@@ -5,8 +5,11 @@ let p = new Parser();
 
 
 describe('TinyLispParser', () => {
-  it('should create an AST', () => {
-    expect(p.parse("(x (y) (a b c))")).toEqual([ { name : 'identifier', lexeme : 'x' }, [ { name : 'identifier', lexeme : 'y' } ], [ { name : 'identifier', lexeme : 'a' }, { name : 'identifier', lexeme : 'b' }, { name : 'identifier', lexeme : 'c' } ] ])
-  });
+  it("should return a flat array with two identifiers", () => {
+    expect(p.parse("(x y)")).toEqual([{'name' : 'identifier', 'lexeme': 'x'},{'name' : 'identifier', 'lexeme': 'y'}])
+  })
 
+  it("should return an array of arrays with two identifiers", () => {
+    expect(p.parse("((x) (y))")).toEqual([[{'name' : 'identifier', 'lexeme': 'x'}],[{'name' : 'identifier', 'lexeme': 'y'}]])
+  })
 });
