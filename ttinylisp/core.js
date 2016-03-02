@@ -15,10 +15,12 @@ class Core {
         '>=': Core.ge,
         '<=': Core.le,
         '=':  Core.eq,
+        'eq':  Core.eq,
         '**':  Core.pow,
         '%':  Core.mod,
         'len' : Core.list_length,
         'car' : Core.car,
+        'lar' : Core.lar,
         'cons': Core.cons,
         'cdr' : Core.cdr,
         'print' : Core.print,
@@ -36,6 +38,7 @@ class Core {
 
   static print (x) { console.log(x); }
   static car (list) { return list[0]; }
+  static lar (list) { return list[list.length-1]; }
   static cdr (list) { return list.slice(1); }
 	static sub (x, y) { return (x - y); }
   static mod (x, y) { return (x % y); }
