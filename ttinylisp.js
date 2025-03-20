@@ -18,7 +18,7 @@ class TinyLisp {
     if (Utils.is_a('Array', expression)) {
       return `(${ expression.map((exp) => this.lispStringify(exp)).join(' ') })`;
     } else {
-      return expression.toString();
+      return expression?.toString();
     }
   }
 }
