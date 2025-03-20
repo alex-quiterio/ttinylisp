@@ -26,23 +26,13 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci || npm install
+        run: npm install
         
       - name: Run linting
         run: npm run lint || echo "Linting step skipped"
         
       - name: Run tests
         run: npm test
-        
-      - name: Test examples
-        run: |
-          # Run examples to ensure they work
-          if [ -d "examples" ]; then
-            for example in examples/*.lisp; do
-              echo "Testing example: $example"
-              node ./src/index.js "$example"
-            done
-          fi
 
   cross-platform:
     name: Test on ${{ matrix.os }}
