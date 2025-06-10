@@ -1,12 +1,12 @@
 'use strict';
 
-let Utils             = require('./ttinylisp/utils');
-let TinyLispParser    = require('./ttinylisp/parser');
+let Utils = require('./ttinylisp/utils');
+let TinyLispParser = require('./ttinylisp/parser');
 let TinyLispEvaluator = require('./ttinylisp/evaluator');
 
 class TinyLisp {
   constructor() {
-    this.parser    = new TinyLispParser();
+    this.parser = new TinyLispParser();
     this.evaluator = new TinyLispEvaluator();
   }
 
@@ -16,7 +16,7 @@ class TinyLisp {
 
   lispStringify(expression) {
     if (Utils.is_a('Array', expression)) {
-      return `(${ expression.map((exp) => this.lispStringify(exp)).join(' ') })`;
+      return `(${expression.map(exp => this.lispStringify(exp)).join(' ')})`;
     } else {
       return expression?.toString();
     }

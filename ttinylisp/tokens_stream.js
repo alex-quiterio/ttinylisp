@@ -1,7 +1,6 @@
 'use strict';
 
 class TokensStream {
-
   constructor(expression) {
     this.cursorPosition = 0;
     this.stream = expression;
@@ -10,7 +9,7 @@ class TokensStream {
   }
 
   nextToken() {
-    return this.stream[this.cursorPosition+1];
+    return this.stream[this.cursorPosition + 1];
   }
 
   rewind(backup) {

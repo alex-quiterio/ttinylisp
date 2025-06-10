@@ -1,8 +1,7 @@
 'use strict';
 
 class Scope {
-
-  constructor(defs, parent) {
+  constructor(defs, parent) {
     this.parent = parent;
     this.definitions = defs || {};
   }

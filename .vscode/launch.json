@@ -1,16 +1,17 @@
 {
-	"version": "0.2.0",
-	"configurations": [
-		{
+  "version": "0.2.0",
+  "configurations": [
+    {
       "name": "Launch Tests",
       "type": "extensionHost",
       "request": "launch",
-      "runtimeExecutable": "${execPath} test",
-      "args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test" ],
-      "stopOnEntry": false,
+      "runtimeExecutable": "npm run test",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}",
+        "--extensionTestsPath=${workspaceRoot}/out/test"
+      ],
       "sourceMaps": true,
-      "outDir": "out",
       "preLaunchTask": "npm"
     }
-	]
+  ]
 }

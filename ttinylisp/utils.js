@@ -1,13 +1,13 @@
 'use strict';
 
 class Utils {
-
   static is_a(type, input) {
-      return Object.prototype.toString.call(input) === '[object ' + type + ']';
+    return Object.prototype.toString.call(input) === '[object ' + type + ']';
   }
 
   static blank(object) {
-    return (object === undefined ||
+    return (
+      object === undefined ||
       object === null ||
       object === false ||
       Utils.blankString(object)
@@ -25,16 +25,20 @@ class Utils {
   static firstMatch(object, callback) {
     let result;
     if (Utils.is_a('Object', object)) {
-      for (var key in object) {
+      for (const key in object) {
         if (object.hasOwnProperty(key)) {
-           result = callback(key, object[key]);
-           if (!Utils.blank(result)) { break; }
+          result = callback(key, object[key]);
+          if (!Utils.blank(result)) {
+            break;
+          }
         }
       }
     } else if (Utils.is_a('Array', object)) {
-      for(var i = 0; i < object.length; i++) {
+      for (let i = 0; i < object.length; i++) {
         result = callback(i, object[i]);
-        if (!Utils.blank(result)) { break; }
+        if (!Utils.blank(result)) {
+          break;
+        }
       }
     }
     return result;
@@ -42,7 +46,7 @@ class Utils {
 
   static reject(array, callback) {
     let newArray = [];
-    array.forEach((element) => {
+    array.forEach(element => {
       if (this.blank(callback(element))) {
         newArray.push(element);
       }

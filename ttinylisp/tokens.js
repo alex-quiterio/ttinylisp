@@ -7,31 +7,54 @@ class Token {
 
   representation() {
     return {
-      'name' : this.identifier(),
-      'lexeme' : this.lexeme
+      name: this.identifier(),
+      lexeme: this.lexeme,
     };
   }
 
-  toString() { return this.lexeme; }
+  toString() {
+    return this.lexeme;
+  }
   // abstract instance methods
-  identifier() {}
+  identifier() {
+    throw new Error('identifier() method must be implemented in the subclass');
+  }
 
-  static isAtom() { return false; }
+  static isAtom() {
+    return false;
+  }
   // abstract static methods;
-  static definition() {}
-  static match(token) { return !!(token && token.match(this.definition())) }
+  static definition() {
+    throw new Error('definition() method must be implemented in the subclass');
+  }
+
+  static match(token) {
+    return token ? token.match(this.definition()) : false;
+  }
 }
 
 class OpenContextToken extends Token {
-  static isAtom() { return true; }
-  static definition() { return /\(/; }
-  identifier() { return 'open-context'; }
+  static isAtom() {
+    return true;
+  }
+  static definition() {
+    return /\(/;
+  }
+  identifier() {
+    return 'open-context';
+  }
 }
 
 class CloseContextToken extends Token {
-  static isAtom() { return true; }
-  static definition() { return /\)/; }
-  identifier() { return 'close-context'; }
+  static isAtom() {
+    return true;
+  }
+  static definition() {
+    return /\)/;
+  }
+  identifier() {
+    return 'close-context';
+  }
 }
 
 class NumberToken extends Token {
@@ -39,28 +62,48 @@ class NumberToken extends Token {
     super(lexeme);
     this.lexeme = parseInt(this.lexeme, 10);
   }
-  static definition() { return /\d/; }
-  identifier() { return 'number'; }
+  static definition() {
+    return /\d/;
+  }
+  identifier() {
+    return 'number';
+  }
 }
 
 class StringContextToken extends Token {
-  static definition() { return /"/; }
-  identifier() { return 'string-context'; }
+  static definition() {
+    return /"/;
+  }
+  identifier() {
+    return 'string-context';
+  }
 }
 
 class StringToken extends Token {
-  static definition() { return /[_a-zA-Z~\s\?\~\!\&\$]/; }
-  identifier() { return 'string'; }
+  static definition() {
+    return /[_a-zA-Z~\s\?\~\!\&\$]/;
+  }
+  identifier() {
+    return 'string';
+  }
 }
 
 class IdentifierToken extends Token {
-  static definition() { return /[a-zA-Z]/; }
-  identifier() { return 'identifier'; }
+  static definition() {
+    return /[a-zA-Z]/;
+  }
+  identifier() {
+    return 'identifier';
+  }
 }
 
 class OperatorToken extends Token {
-  static definition() { return /\+|\*|\/|\%|\<|\>|\=/; }
-  identifier() { return 'operator'; }
+  static definition() {
+    return /[+*/<%>=]/;
+  }
+  identifier() {
+    return 'operator';
+  }
 }
 
 // exports
