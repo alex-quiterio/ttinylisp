@@ -43,13 +43,6 @@ Run the tests using:
 npm test
 ```
 
-## Development
-
-The project uses Gulp for automation. To start development mode:
-
-```sh
-gulp
-```
 
 ## License
 
