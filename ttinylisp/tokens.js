@@ -81,7 +81,7 @@ class StringContextToken extends Token {
 
 class StringToken extends Token {
   static definition() {
-    return /[_a-zA-Z~\s\?\~\!\&\$]/;
+    return /[_a-zA-Z~\s?!&$]/;
   }
   identifier() {
     return 'string';
