@@ -2,6 +2,7 @@
 
 const Parser = require('./ttinylisp/parser');
 const Evaluator = require('./ttinylisp/evaluator');
+const { stringify } = require('./ttinylisp/printer');
 
 class TinyLisp {
   constructor() {
@@ -20,17 +21,11 @@ class TinyLisp {
 
   // Evaluate `source` and return the result in its printed Lisp form.
   evaluateExpression(source) {
-    return TinyLisp.stringify(this.evaluate(source));
+    return stringify(this.evaluate(source));
   }
 
   static stringify(value) {
-    if (Array.isArray(value)) {
-      return `(${value.map(TinyLisp.stringify).join(' ')})`;
-    }
-    if (typeof value === 'function') {
-      return '#<function>';
-    }
-    return value?.toString();
+    return stringify(value);
   }
 }
 

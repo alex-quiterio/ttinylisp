@@ -52,19 +52,27 @@ Unclosed parentheses? The REPL just waits for the next line.
 
 ## 📜 Run a script
 
-```lisp
-;; examples/hello.lisp
-(defun greet (name)
-  (print (concat "Hello, " name "!")))
-
-(greet "World")
-```
-
 ```sh
-$ node bin/ttinylisp.js examples/hello.lisp
-Hello, World!
-3628800
+$ node bin/ttinylisp.js examples/hanoi.lisp
+move disk 1 from A to C
+move disk 2 from A to B
+...
+total moves: 7
 ```
+
+The [`examples/`](examples) folder has more to try:
+
+| Example                                           | Shows                                                       |
+| ------------------------------------------------- | ----------------------------------------------------------- |
+| [`hello.lisp`](examples/hello.lisp)               | Functions, strings and recursion (factorial)                |
+| [`higher-order.lisp`](examples/higher-order.lisp) | `map`, `filter`, `reduce` and `compose`, built from scratch |
+| [`sorting.lisp`](examples/sorting.lisp)           | Quicksort and merge sort on lists                           |
+| [`primes.lisp`](examples/primes.lisp)             | Primes, GCD/LCM and Collatz sequences                       |
+| [`fizzbuzz.lisp`](examples/fizzbuzz.lisp)         | Nested conditionals building a list                         |
+| [`hanoi.lisp`](examples/hanoi.lisp)               | Towers of Hanoi, with printed moves                         |
+| [`church.lisp`](examples/church.lisp)             | Church numerals: arithmetic with only lambdas               |
+
+Every example is run by the specs, so they always work.
 
 ## 🧩 Use it as a library
 

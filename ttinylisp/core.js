@@ -1,6 +1,7 @@
 'use strict';
 
 const Scope = require('./scope');
+const { stringify } = require('./printer');
 
 // Ordinary functions: they receive already-evaluated arguments.
 const builtins = {
@@ -23,7 +24,7 @@ const builtins = {
   cons: (x, y) => [x].concat(y),
   concat: (...xs) => xs.join(''),
   print: x => {
-    console.log(x);
+    console.log(stringify(x));
     return x;
   },
 };
