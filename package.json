@@ -1,16 +1,28 @@
 {
   "name": "ttinylisp",
-  "description": "An REPL for a tiny lisp Interperter.",
+  "description": "A REPL for a tiny Lisp interpreter.",
   "author": "Alex Quiterio <afp.quiterio@gmail.com>",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "ttinylisp.js",
+  "bin": {
+    "ttinylisp": "bin/ttinylisp.js"
+  },
   "scripts": {
-    "test": "npx jest --config jest.config.js"
+    "start": "node bin/ttinylisp.js",
+    "test": "jest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "engines": {
+    "node": ">=22"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^30.5.2",
+    "prettier": "^3.9.10"
   },
   "volta": {
-    "node": "22.16.0",
-    "npm": "11.3.0"
+    "node": "26.13.0",
+    "npm": "12.2.1"
   }
 }

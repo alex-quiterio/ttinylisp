@@ -2,16 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Tests",
-      "type": "extensionHost",
+      "name": "Debug specs",
+      "type": "node",
       "request": "launch",
-      "runtimeExecutable": "npm run test",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceRoot}",
-        "--extensionTestsPath=${workspaceRoot}/out/test"
-      ],
-      "sourceMaps": true,
-      "preLaunchTask": "npm"
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["test", "--", "--runInBand"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "REPL",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/ttinylisp.js",
+      "console": "integratedTerminal"
     }
   ]
 }
