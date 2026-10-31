@@ -1,123 +1,83 @@
 'use strict';
 
-let Scope = require('./scope');
+const Scope = require('./scope');
 
-class Core {
-  static defaultEnv() {
-    return {
-      '+': Core.add,
-      '-': Core.sub,
-      '*': Core.mul,
-      '/': Core.div,
-      '>': Core.gt,
-      '<': Core.lt,
-      '>=': Core.ge,
-      '<=': Core.le,
-      '=': Core.eq,
-      eq: Core.eq,
-      '**': Core.pow,
-      '%': Core.mod,
-      len: Core.list_length,
-      car: Core.car,
-      lar: Core.lar,
-      cons: Core.cons,
-      cdr: Core.cdr,
-      print: Core.print,
-      let: Core.let_function,
-      defparameter: Core.define_variable,
-      if: Core.if_function,
-      lambda: Core.lambda_function,
-      defun: Core.function_function,
-    };
-  }
-
-  static specialTokens() {
-    return ['if', 'defparameter', 'let', 'lambda', 'defun'];
-  }
-
-  static print(x) {
+// Ordinary functions: they receive already-evaluated arguments.
+const builtins = {
+  '+': (...xs) => xs.reduce((a, b) => a + b, 0),
+  '-': (x, ...ys) => (ys.length ? ys.reduce((a, b) => a - b, x) : -x),
+  '*': (...xs) => xs.reduce((a, b) => a * b, 1),
+  '/': (x, ...ys) => (ys.length ? ys.reduce((a, b) => a / b, x) : 1 / x),
+  '%': (x, y) => x % y,
+  '**': (x, y) => x ** y,
+  '>': (x, y) => x > y,
+  '<': (x, y) => x < y,
+  '>=': (x, y) => x >= y,
+  '<=': (x, y) => x <= y,
+  '=': (x, y) => x === y,
+  eq: (x, y) => x === y,
+  len: list => list.length,
+  car: list => list[0],
+  lar: list => list[list.length - 1],
+  cdr: list => list.slice(1),
+  cons: (x, y) => [x].concat(y),
+  concat: (...xs) => xs.join(''),
+  print: x => {
     console.log(x);
-  }
-  static car(list) {
-    return list[0];
-  }
-  static lar(list) {
-    return list[list.length - 1];
-  }
-  static cdr(list) {
-    return list.slice(1);
-  }
-  static sub(x, y) {
-    return x - y;
-  }
-  static mod(x, y) {
-    return x % y;
-  }
-  static add(x, y) {
-    return x + y;
-  }
-  static mul(x, y) {
-    return x * y;
-  }
-  static div(x, y) {
-    return x / y;
-  }
-  static pow(x, y) {
-    return Math.pow(x, y);
-  }
-  static gt(x, y) {
-    return x > y;
-  }
-  static lt(x, y) {
-    return x < y;
-  }
-  static ge(x, y) {
-    return x >= y;
-  }
-  static le(x, y) {
-    return x <= y;
-  }
-  static eq(x, y) {
-    return x === y;
-  }
-  static cons(x, y, ev) {
-    return [x].concat(y);
-  }
+    return x;
+  },
+};
 
-  static define_variable(lasign, rasign, ev) {
-    this.set(lasign.lexeme, ev.eval(rasign));
-    return this.find(lasign.lexeme);
+// Evaluates a body of expressions in order and returns the last value.
+function evalBody(body, scope, evaluator) {
+  let result;
+  for (const expression of body) {
+    result = evaluator.eval(expression, scope);
   }
-  static list_length(list, ev) {
-    return list.length;
-  }
-  static if_function(test, positive, negative, ev) {
-    return ev.eval(test, this)
-      ? ev.eval(positive, this)
-      : ev.eval(negative, this);
-  }
-
-  static let_function(definitions, rest, ev) {
-    let scope = new Scope({}, this);
-    definitions.forEach((l, _) =>
-      Core.define_variable.apply(scope, l.concat(ev)),
-    );
-    return ev.eval(rest, scope);
-  }
-
-  static lambda_function(args, body, ev) {
-    return function () {
-      let argsPopulated = {};
-      let newEv = Array.prototype.slice.call(arguments).pop();
-      args.forEach((val, ix) => (argsPopulated[val.lexeme] = arguments[ix]));
-      return newEv.eval(body, new Scope(argsPopulated, this));
-    };
-  }
-
-  static function_function(name, args, body, ev) {
-    this.set(name.lexeme, Core.lambda_function(args, body, ev));
-    return name.lexeme.toUpperCase();
-  }
+  return result;
 }
 
-module.exports = Core;
+function makeLambda(params, body, closure, evaluator) {
+  return (...args) => {
+    const bindings = {};
+    params.forEach((param, i) => (bindings[param.lexeme] = args[i]));
+    return evalBody(body, new Scope(bindings, closure), evaluator);
+  };
+}
+
+// Special forms: they receive their arguments unevaluated together with the
+// current scope and evaluator, and decide what (and where) to evaluate.
+const specialForms = {
+  if([test, positive, negative], scope, ev) {
+    if (ev.eval(test, scope)) return ev.eval(positive, scope);
+    return negative === undefined ? undefined : ev.eval(negative, scope);
+  },
+
+  defparameter([name, value], scope, ev) {
+    const result = ev.eval(value, scope);
+    ev.globalScope.set(name.lexeme, result);
+    return result;
+  },
+
+  let([definitions, ...body], scope, ev) {
+    const local = new Scope({}, scope);
+    for (const [name, value] of definitions) {
+      local.set(name.lexeme, ev.eval(value, scope));
+    }
+    return evalBody(body, local, ev);
+  },
+
+  lambda([params, ...body], scope, ev) {
+    return makeLambda(params, body, scope, ev);
+  },
+
+  defun([name, params, ...body], scope, ev) {
+    ev.globalScope.set(name.lexeme, makeLambda(params, body, scope, ev));
+    return name.lexeme.toUpperCase();
+  },
+};
+
+module.exports = {
+  builtins,
+  specialForms: new Map(Object.entries(specialForms)),
+};

@@ -1,6 +1,13 @@
+;; Greet a person by name.
 (defun greet (name)
-  "Function to greet a person by name"
-  (format t "Hello, ~a!~%" name))
+  (print (concat "Hello, " name "!")))
 
-;; Example usage:
-(greet "World")  ; Outputs: Hello, World!
+(greet "World") ; prints: Hello, World!
+
+;; Recursion works because functions are defined in the global scope.
+(defun factorial (n)
+  (if (<= n 1)
+      1
+      (* n (factorial (- n 1)))))
+
+(print (factorial 10)) ; prints: 3628800

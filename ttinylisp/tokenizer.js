@@ -1,74 +1,57 @@
 'use strict';
 
-let Utils = require('./utils');
-let tokens = require('./tokens');
-let TokensStream = require('./tokens_stream');
+const tokens = require('./tokens');
+const { ParseError } = require('./errors');
+
+const WHITESPACE = /\s/;
+const DELIMITER = /[\s()";]/;
+const NUMBER = /^[+-]?(\d+(\.\d*)?|\.\d+)$/;
+const OPERATOR = /^[-+*/<>=%!]+$/;
 
 class Tokenizer {
-  constructor() {
-    this.lexical = {
-      oCtx: tokens.OpenContextToken,
-      cCtx: tokens.CloseContextToken,
-      op: tokens.OperatorToken,
-      id: tokens.IdentifierToken,
-      num: tokens.NumberToken,
-      strCtx: [tokens.StringContextToken, tokens.StringToken],
-    };
-  }
-
   // Convert a string program into a list of tokens.
   tokenize(program) {
-    let stream = new TokensStream(program),
-      tokens = [];
-    while (!Utils.blank(stream.currentToken())) {
-      tokens.push(this.detectToken(stream));
-      stream.advance();
-    }
-    return Utils.reject(tokens, Utils.blank);
-  }
+    const result = [];
+    let pos = 0;
 
-  detectToken(stream) {
-    return Utils.firstMatch(this.lexical, (_, lexer) => {
-      if (Utils.is_a('Array', lexer)) {
-        lexer = this.resolveDependencies(stream, lexer.slice(0));
-        if (!Utils.blank(lexer)) {
-          let token = this.reduceToken(stream, lexer);
-          stream.advance();
-          return new lexer(token);
+    while (pos < program.length) {
+      const char = program[pos];
+
+      if (WHITESPACE.test(char)) {
+        pos++;
+      } else if (char === ';') {
+        // Line comment: skip to the end of the line.
+        while (pos < program.length && program[pos] !== '\n') pos++;
+      } else if (char === '(') {
+        result.push(new tokens.OpenContextToken(char));
+        pos++;
+      } else if (char === ')') {
+        result.push(new tokens.CloseContextToken(char));
+        pos++;
+      } else if (char === '"') {
+        const end = program.indexOf('"', pos + 1);
+        if (end === -1) {
+          throw new ParseError(`unterminated string at position ${pos}`, {
+            incomplete: true,
+          });
         }
-      } else if (lexer.match(stream.currentToken())) {
-        return new lexer(this.reduceToken(stream, lexer));
+        result.push(new tokens.StringToken(program.slice(pos + 1, end)));
+        pos = end + 1;
+      } else {
+        let end = pos;
+        while (end < program.length && !DELIMITER.test(program[end])) end++;
+        result.push(Tokenizer.atom(program.slice(pos, end)));
+        pos = end;
       }
-    });
+    }
+
+    return result;
   }
 
-  resolveDependencies(stream, dependencies) {
-    let token = stream.currentToken();
-    const lexer = dependencies.shift();
-    if (dependencies.length > 0) {
-      if (lexer.match(token)) {
-        stream.advance();
-        return this.resolveDependencies(stream, dependencies);
-      }
-    } else if (lexer.match(token)) {
-      return lexer;
-    }
-    return null;
-  }
-
-  reduceToken(stream, evaluator) {
-    let generic = stream.currentToken();
-    if (evaluator.isAtom()) {
-      return generic;
-    }
-    while (
-      !Utils.blank(stream.nextToken()) &&
-      evaluator.match(stream.nextToken())
-    ) {
-      stream.advance();
-      generic += stream.currentToken();
-    }
-    return generic;
+  static atom(text) {
+    if (NUMBER.test(text)) return new tokens.NumberToken(text);
+    if (OPERATOR.test(text)) return new tokens.OperatorToken(text);
+    return new tokens.IdentifierToken(text);
   }
 }
 

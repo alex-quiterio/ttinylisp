@@ -100,4 +100,34 @@ describe('tokenize', () => {
   it('should lex multi atom list', () => {
     expect(transcript(t.tokenize('(hi you)'))).toEqual(['(', 'hi', 'you', ')']);
   });
+
+  it('should keep any character inside a string', () => {
+    expect(transcript(t.tokenize('"Hello, World!"'))).toEqual([
+      'Hello, World!',
+    ]);
+  });
+
+  it('should lex identifiers containing digits and dashes', () => {
+    expect(transcript(t.tokenize('(my-var2 -)'))).toEqual([
+      '(',
+      'my-var2',
+      '-',
+      ')',
+    ]);
+  });
+
+  it('should skip comments', () => {
+    expect(transcript(t.tokenize('(x) ; ignored\n(y)'))).toEqual([
+      '(',
+      'x',
+      ')',
+      '(',
+      'y',
+      ')',
+    ]);
+  });
+
+  it('should raise on an unterminated string', () => {
+    expect(() => t.tokenize('"oops')).toThrow('unterminated string');
+  });
 });

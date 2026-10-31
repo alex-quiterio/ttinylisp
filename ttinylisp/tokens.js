@@ -5,53 +5,27 @@ class Token {
     this.lexeme = lexeme;
   }
 
+  // Plain-object form consumed by the parser and evaluator.
   representation() {
-    return {
-      name: this.identifier(),
-      lexeme: this.lexeme,
-    };
+    return { name: this.identifier(), lexeme: this.lexeme };
   }
 
   toString() {
     return this.lexeme;
   }
-  // abstract instance methods
+
   identifier() {
     throw new Error('identifier() method must be implemented in the subclass');
-  }
-
-  static isAtom() {
-    return false;
-  }
-  // abstract static methods;
-  static definition() {
-    throw new Error('definition() method must be implemented in the subclass');
-  }
-
-  static match(token) {
-    return token ? token.match(this.definition()) : false;
   }
 }
 
 class OpenContextToken extends Token {
-  static isAtom() {
-    return true;
-  }
-  static definition() {
-    return /\(/;
-  }
   identifier() {
     return 'open-context';
   }
 }
 
 class CloseContextToken extends Token {
-  static isAtom() {
-    return true;
-  }
-  static definition() {
-    return /\)/;
-  }
   identifier() {
     return 'close-context';
   }
@@ -59,58 +33,37 @@ class CloseContextToken extends Token {
 
 class NumberToken extends Token {
   constructor(lexeme) {
-    super(lexeme);
-    this.lexeme = parseInt(this.lexeme, 10);
-  }
-  static definition() {
-    return /\d/;
+    super(Number(lexeme));
   }
   identifier() {
     return 'number';
   }
 }
 
-class StringContextToken extends Token {
-  static definition() {
-    return /"/;
-  }
-  identifier() {
-    return 'string-context';
-  }
-}
-
 class StringToken extends Token {
-  static definition() {
-    return /[_a-zA-Z~\s?!&$]/;
-  }
   identifier() {
     return 'string';
   }
 }
 
 class IdentifierToken extends Token {
-  static definition() {
-    return /[a-zA-Z]/;
-  }
   identifier() {
     return 'identifier';
   }
 }
 
 class OperatorToken extends Token {
-  static definition() {
-    return /[+*/<%>=]/;
-  }
   identifier() {
     return 'operator';
   }
 }
 
-// exports
-module.exports.OpenContextToken = OpenContextToken;
-module.exports.CloseContextToken = CloseContextToken;
-module.exports.NumberToken = NumberToken;
-module.exports.StringContextToken = StringContextToken;
-module.exports.StringToken = StringToken;
-module.exports.IdentifierToken = IdentifierToken;
-module.exports.OperatorToken = OperatorToken;
+module.exports = {
+  Token,
+  OpenContextToken,
+  CloseContextToken,
+  NumberToken,
+  StringToken,
+  IdentifierToken,
+  OperatorToken,
+};

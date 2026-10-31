@@ -1,21 +1,22 @@
 'use strict';
 
 class Scope {
-  constructor(defs, parent) {
+  constructor(defs = {}, parent = null) {
     this.parent = parent;
-    this.definitions = defs || {};
+    this.definitions = new Map(Object.entries(defs));
   }
 
   set(name, value) {
-    this.definitions[name] = value;
+    this.definitions.set(name, value);
   }
 
   find(name) {
-    if (this.definitions[name] !== undefined) {
-      return this.definitions[name];
-    } else if (this.parent !== null) {
-      return this.parent.find(name);
+    for (let scope = this; scope !== null; scope = scope.parent) {
+      if (scope.definitions.has(name)) {
+        return scope.definitions.get(name);
+      }
     }
+    return undefined;
   }
 }
 

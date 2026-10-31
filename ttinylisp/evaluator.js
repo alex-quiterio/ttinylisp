@@ -1,44 +1,39 @@
 'use strict';
 
-let Core = require('./core');
-let Scope = require('./scope');
-let Utils = require('./utils');
+const { builtins, specialForms } = require('./core');
+const Scope = require('./scope');
 
 class Evaluator {
   constructor() {
-    this.defaultScope = new Scope(Core.defaultEnv(), null);
+    this.globalScope = new Scope(builtins, null);
   }
 
-  eval(expression, scope) {
-    if (scope === undefined) {
-      scope = this.defaultScope;
-    }
-    if (Utils.is_a('Array', expression)) {
+  eval(expression, scope = this.globalScope) {
+    if (Array.isArray(expression)) {
       return this.evalList(expression, scope);
-    } else if (
-      expression.name === 'identifier' ||
-      expression.name === 'operator'
-    ) {
-      return scope.find(expression.lexeme);
-    } else {
-      return expression.lexeme;
     }
+    if (expression.name === 'identifier' || expression.name === 'operator') {
+      return scope.find(expression.lexeme);
+    }
+    return expression.lexeme;
   }
 
-  evalList(expressionsList, scope) {
-    if (Core.specialTokens().indexOf(expressionsList[0].lexeme) > -1) {
-      let _func = scope.find(expressionsList[0].lexeme);
-      let _arguments = expressionsList.slice(1).concat(this);
-      return _func.apply(scope, _arguments);
-    } else {
-      let _evaluated = expressionsList.map((exp, _) => this.eval(exp, scope));
-      if (Utils.is_a('Function', _evaluated[0])) {
-        let _func = _evaluated[0];
-        let _arguments = _evaluated.slice(1).concat(this);
-        return _func.apply(scope, _arguments);
-      }
-      return _evaluated;
+  evalList(list, scope) {
+    if (list.length === 0) {
+      return [];
     }
+
+    const [head, ...rest] = list;
+    if (head.name === 'identifier' && specialForms.has(head.lexeme)) {
+      return specialForms.get(head.lexeme)(rest, scope, this);
+    }
+
+    const values = list.map(expression => this.eval(expression, scope));
+    if (typeof values[0] === 'function') {
+      return values[0](...values.slice(1));
+    }
+    // A list whose head is not callable evaluates to its values.
+    return values;
   }
 }
 

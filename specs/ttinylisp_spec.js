@@ -95,4 +95,67 @@ describe('TinyLisp', () => {
       expect(lisper.evaluateExpression('(multFive 10)')).toEqual('50');
     });
   });
+
+  describe('arithmetic', () => {
+    it('should subtract numbers', () => {
+      expect(lisper.evaluateExpression('(- 5 3)')).toEqual('2');
+    });
+    it('should negate a single number', () => {
+      expect(lisper.evaluateExpression('(- 5)')).toEqual('-5');
+    });
+    it('should accept a variable number of arguments', () => {
+      expect(lisper.evaluateExpression('(+ 1 2 3 4)')).toEqual('10');
+    });
+    it('should handle negative and decimal literals', () => {
+      expect(lisper.evaluateExpression('(+ -1 2.5)')).toEqual('1.5');
+    });
+  });
+
+  describe('scoping', () => {
+    it('should evaluate let bindings in the enclosing scope', () => {
+      expect(
+        lisper.evaluateExpression('(let ((a 2)) (let ((b (* a 3))) b))'),
+      ).toEqual('6');
+    });
+    it('should evaluate every expression of a let body', () => {
+      expect(
+        lisper.evaluateExpression('(let ((a 2)) (+ a 1) (* a 10))'),
+      ).toEqual('20');
+    });
+    it('should capture the defining scope in closures', () => {
+      lisper.evaluateExpression(
+        '(defparameter adder (let ((n 5)) (lambda (x) (+ x n))))',
+      );
+      expect(lisper.evaluateExpression('(let ((n 100)) (adder 1))')).toEqual(
+        '6',
+      );
+    });
+    it('should not resolve names from Object.prototype', () => {
+      expect(lisper.evaluateExpression('constructor')).toEqual(undefined);
+    });
+  });
+
+  describe('programs', () => {
+    it('should support recursive functions', () => {
+      lisper.evaluateExpression(
+        '(defun fact (n) (if (<= n 1) 1 (* n (fact (- n 1)))))',
+      );
+      expect(lisper.evaluateExpression('(fact 5)')).toEqual('120');
+    });
+    it('should evaluate multiple top-level expressions', () => {
+      expect(
+        lisper.evaluateExpression(
+          '; a comment\n(defparameter x 4) ; trailing\n(* x x)',
+        ),
+      ).toEqual('16');
+    });
+    it('should raise on unbalanced parentheses', () => {
+      expect(() => lisper.evaluateExpression('(+ 1 2')).toThrow(
+        'missing close-context',
+      );
+      expect(() => lisper.evaluateExpression(')')).toThrow(
+        'unexpected close-context',
+      );
+    });
+  });
 });
